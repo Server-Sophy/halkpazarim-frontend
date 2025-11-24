@@ -1,6 +1,5 @@
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import CartContext from '../context/CartContext';
+import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
 import ImageWithFallback from './ImageWithFallback';
 
@@ -10,9 +9,10 @@ const ProductCard = ({
   subtitle,
   price,
   image,
+  sellerName,
   href = '#',
 }) => {
-  const { addToCart } = useContext(CartContext);
+  const { addToCart } = useCart();
   const numericPrice = typeof price === 'number' ? price : parseFloat(price) || 0;
   const priceLabel = typeof price === 'number' ? formatPrice(price) : price;
 
@@ -33,6 +33,8 @@ const ProductCard = ({
       title,
       price: numericPrice,
       image,
+      sellerName,
+      subtitle,
     });
   };
 

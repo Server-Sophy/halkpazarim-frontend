@@ -1,35 +1,49 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 
 const CartContext = createContext({
   items: [],
-  total: 0,
+  cartCount: 0,
+  cartTotal: 0,
   addToCart: () => {},
   removeFromCart: () => {},
   clearCart: () => {},
-  getCount: () => 0,
-  getTotal: () => 0,
 });
 
-export const CartProvider = ({ children }) => {
-  const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
+const deriveSellerName = (product) => {
+  if (product?.sellerName) return product.sellerName;
+  if (product?.seller) return product.seller;
 
-  useEffect(() => {
-    const newTotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-    setTotal(newTotal);
-  }, [items]);
-
-  const addToCart = useCallback((product) => {
-    if (!product?.id) {
-      return;
+  if (product?.subtitle && typeof product.subtitle === 'string') {
+    const [, value] = product.subtitle.split(':');
+    if (value) {
+      return value.trim();
     }
+  }
+
+  return undefined;
+};
+
+export const CartProvider = ({ children, initialItems = [] }) => {
+  const [items, setItems] = useState(initialItems);
+
+  const addToCart = useCallback((product = {}) => {
+    if (!product.id) return;
+
+    const unitPrice = Number(product.price) || 0;
+    const sellerName = deriveSellerName(product);
 
     setItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
+      const existing = prevItems.find((item) => item.id === product.id);
 
-      if (existingItem) {
+      if (existing) {
         return prevItems.map((item) =>
-          item.id === product.id ? { ...item, qty: item.qty + 1 } : item,
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,
         );
       }
 
@@ -37,10 +51,11 @@ export const CartProvider = ({ children }) => {
         ...prevItems,
         {
           id: product.id,
-          title: product.title,
-          price: product.price ?? 0,
+          title: product.title || 'Ürün',
+          price: unitPrice,
           image: product.image,
-          qty: 1,
+          sellerName,
+          quantity: 1,
         },
       ];
     });
@@ -54,24 +69,26 @@ export const CartProvider = ({ children }) => {
     setItems([]);
   }, []);
 
-  const getCount = useCallback(
-    () => items.reduce((count, item) => count + item.qty, 0),
+  const cartCount = useMemo(
+    () => items.reduce((total, item) => total + (item.quantity || 0), 0),
     [items],
   );
 
-  const getTotal = useCallback(() => total, [total]);
+  const cartTotal = useMemo(
+    () => items.reduce((total, item) => total + (item.quantity || 0) * (Number(item.price) || 0), 0),
+    [items],
+  );
 
   const value = useMemo(
     () => ({
       items,
-      total,
+      cartCount,
+      cartTotal,
       addToCart,
       removeFromCart,
       clearCart,
-      getCount,
-      getTotal,
     }),
-    [items, total, addToCart, removeFromCart, clearCart, getCount, getTotal],
+    [items, cartCount, cartTotal, addToCart, removeFromCart, clearCart],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

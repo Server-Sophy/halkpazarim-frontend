@@ -101,6 +101,36 @@ const Home = () => {
             </div>
           )}
         </section>
+
+        <section className="trust-section">
+          <h2>Neden Halkpazarım?</h2>
+          <div className="trust-grid">
+            <div className="trust-item">
+              <div className="trust-icon" aria-hidden="true" />
+              <h3>Yerel üreticiyi destekle</h3>
+              <p>
+                Anadolu&apos;nun köylerinden küçük atölyelere kadar, emeğin gerçek sahibinden
+                alışveriş yaparak üreticinin payını büyüt.
+              </p>
+            </div>
+            <div className="trust-item">
+              <div className="trust-icon" aria-hidden="true" />
+              <h3>Genç zanaatkârlara görünürlük</h3>
+              <p>
+                Tasarımcılar, seramikçiler ve deri ustaları ürünlerini güvenle sergilerken
+                sen de özgün parçalara kolayca ulaş.
+              </p>
+            </div>
+            <div className="trust-item">
+              <div className="trust-icon" aria-hidden="true" />
+              <h3>Türkiye&apos;nin dört bir yanından güvenli alışveriş</h3>
+              <p>
+                Doğrulanmış satıcı profilleri, açıklayıcı ürün kartları ve şeffaf fiyatlarla
+                rahatça sipariş ver, dengeyi bozmadan kargo ücretini bil.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>

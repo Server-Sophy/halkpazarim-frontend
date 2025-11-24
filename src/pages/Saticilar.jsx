@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { regions, demoSellers } from '../data/sellersDemo';
@@ -38,7 +39,7 @@ const Saticilar = () => {
         </div>
         <div className="seller-grid">
           {filteredSellers.map((seller) => (
-            <div className="seller-card" key={seller.id}>
+            <Link to={`/satici/${seller.id}`} className="seller-card" key={seller.id}>
               {seller.image && <img src={seller.image} alt={seller.name} />}
               <div className="seller-card-body">
                 <h3>{seller.name}</h3>
@@ -51,7 +52,7 @@ const Saticilar = () => {
                 </p>
                 <p>{seller.description}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </main>

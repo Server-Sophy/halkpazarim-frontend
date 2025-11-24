@@ -1,14 +1,16 @@
-import { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import CartContext from '../context/CartContext';
+import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
 
 const SHIPPING_FEE = 29.99;
 
 const Sepet = () => {
-  const { items, getTotal, removeFromCart } = useContext(CartContext);
-  const subtotal = getTotal();
+  const {
+    items, cartTotal, removeFromCart, clearCart,
+  } = useCart();
+  const subtotal = cartTotal;
   const shipping = items.length > 0 ? SHIPPING_FEE : 0;
   const grandTotal = subtotal + shipping;
 
@@ -32,11 +34,12 @@ const Sepet = () => {
                   {item.image && <img src={item.image} alt={item.title} />}
                   <div className="cart-item-info">
                     <h4>{item.title}</h4>
-                    <p>Adet: {item.qty}</p>
-                    <p className="price">{formatPrice(item.price * item.qty)}</p>
-                    <a href="#" onClick={(event) => handleRemove(event, item.id)}>
+                    {item.sellerName && <p className="seller-meta">{item.sellerName}</p>}
+                    <p>Adet: {item.quantity}</p>
+                    <p className="price">{formatPrice(item.price * item.quantity)}</p>
+                    <button type="button" className="link-button" onClick={(event) => handleRemove(event, item.id)}>
                       Kaldır
-                    </a>
+                    </button>
                   </div>
                 </div>
               ))
@@ -56,9 +59,16 @@ const Sepet = () => {
               <span>Genel Toplam</span>
               <span>{formatPrice(grandTotal)}</span>
             </div>
-            <button className="btn btn-primary" style={{ width: '100%', marginTop: '20px' }}>
-              Alışverişi Tamamla
-            </button>
+            <Link to="/odeme">
+              <button className="btn btn-primary" style={{ width: '100%', marginTop: '20px' }}>
+                Alışverişi Tamamla
+              </button>
+            </Link>
+            {items.length > 0 && (
+              <button type="button" className="btn btn-secondary" style={{ width: '100%', marginTop: '10px' }} onClick={clearCart}>
+                Sepeti Temizle
+              </button>
+            )}
           </div>
         </div>
       </main>

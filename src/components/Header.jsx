@@ -1,10 +1,8 @@
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import CartContext from '../context/CartContext';
+import { useCart } from '../context/CartContext';
 
 const Header = () => {
-  const { getCount } = useContext(CartContext);
-  const cartCount = getCount();
+  const { cartCount } = useCart();
 
   return (
     <header>
@@ -22,6 +20,9 @@ const Header = () => {
             <Link to="/atolye">Zanaat Atölyesi</Link>
           </li>
           <li>
+            <Link to="/saticilar">Satıcılar</Link>
+          </li>
+          <li>
             <Link to="/hakkimizda">Hakkımızda</Link>
           </li>
           <li>
@@ -34,7 +35,7 @@ const Header = () => {
           Giriş Yap
         </a>
         <Link to="/sepet" className="btn btn-primary">
-          Sepet ({cartCount})
+          {`Sepet (${cartCount})`}
         </Link>
       </div>
     </header>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
@@ -14,9 +14,41 @@ const categoryFilters = [
   'Salça & Sos',
 ];
 
+const deriveProductTags = (product) => {
+  if (Array.isArray(product.tags) && product.tags.length > 0) {
+    return product.tags;
+  }
+
+  const searchable = `${product.title} ${product.subtitle || ''}`.toLowerCase();
+  const tags = [];
+
+  if (searchable.includes('peynir')) {
+    tags.push('Peynirler');
+  }
+  if (searchable.includes('zeytin')) {
+    tags.push('Zeytinyağı');
+  }
+  if (searchable.includes('reçel') || searchable.includes('bal')) {
+    tags.push('Reçel & Bal');
+  }
+  if (searchable.includes('bakliyat') || searchable.includes('nohut') || searchable.includes('mercimek')) {
+    tags.push('Bakliyat');
+  }
+  if (searchable.includes('salça') || searchable.includes('sos')) {
+    tags.push('Salça & Sos');
+  }
+
+  if (tags.length === 0) {
+    tags.push('Kahvaltılık');
+  }
+
+  return tags;
+};
+
 const Pazar = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('Tümü');
 
   useEffect(() => {
     let active = true;
@@ -48,16 +80,32 @@ const Pazar = () => {
 
   const pazarProducts = products.filter((product) => product.category === 'yoresel');
 
+  const filteredProducts = useMemo(() => {
+    if (activeFilter === 'Tümü') {
+      return pazarProducts;
+    }
+
+    return pazarProducts.filter((product) => deriveProductTags(product).includes(activeFilter));
+  }, [pazarProducts, activeFilter]);
+
   return (
     <>
       <Header />
       <main>
         <h2>Yöresel Pazar</h2>
+        <p className="page-intro">
+          Kahvaltılık, peynir, zeytin ve daha fazlası burada. Filtreleri kullanarak ürüne hızlıca ulaş.
+        </p>
         <div className="category-filters">
           {categoryFilters.map((filter) => (
-            <a href="#" key={filter}>
+            <button
+              key={filter}
+              type="button"
+              className={activeFilter === filter ? 'active' : undefined}
+              onClick={() => setActiveFilter(filter)}
+            >
               {filter}
-            </a>
+            </button>
           ))}
         </div>
         <section className="product-section">
@@ -65,7 +113,7 @@ const Pazar = () => {
             <p>Yükleniyor...</p>
           ) : (
             <div className="product-grid">
-              {pazarProducts.map((product) => (
+              {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   id={product.id}

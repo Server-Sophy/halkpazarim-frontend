@@ -70,7 +70,7 @@ export const PRODUCTS = [
     title: 'Makrome Duvar Süsü',
     subtitle: 'Tasarımcı: Hayal Atölyesi',
     price: 150,
-    image: '/images/makrome-sus-kart.jpg',
+    image: '/images/bg-atolye.jpg',
     seller: 'Hayal Atölyesi',
     sellerSlug: 'hayal',
     category: 'atolye',
